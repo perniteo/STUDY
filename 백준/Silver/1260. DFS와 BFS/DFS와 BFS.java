@@ -1,85 +1,68 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Queue;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
+//성능 개선
 public class Main {
 
-  private final Map<Integer, List<Integer>> graph;
-
-  public Main() {
-    graph = new HashMap<>();
-  }
+  private static int[][] graph;
+  private static boolean[] visited;
 
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
-    StringTokenizer st = new StringTokenizer(scanner.nextLine());
-    int vertex = Integer.parseInt(st.nextToken());
-    int edge = Integer.parseInt(st.nextToken());
-    int start = Integer.parseInt(st.nextToken());
+    int vertex = scanner.nextInt();
+    int edge = scanner.nextInt();
+    int start = scanner.nextInt();
 
-    Main graph = new Main();
+    graph = new int[vertex + 1][vertex + 1];
+
     for (int i = 0; i < edge; i++) {
-      StringTokenizer st2 = new StringTokenizer(scanner.nextLine());
-      graph.addEdge(Integer.parseInt(st2.nextToken()), Integer.parseInt(st2.nextToken()));
+      addEdge(scanner.nextInt(), scanner.nextInt());
     }
 
-    for (Entry entry : graph.graph.entrySet()) {
-      Collections.sort((List<Integer>) entry.getValue());
-    }
-    graph.dfs(start);
+    visited = new boolean[vertex + 1];
+
+    dfs(start);
+
     System.out.println();
-    graph.bfs(start);
+
+    visited = new boolean[vertex + 1];
+
+    bfs(start);
+
   }
 
-  public void addEdge(int source, int destination) {
-    graph.putIfAbsent(source, new ArrayList<>());
-    graph.putIfAbsent(destination, new ArrayList<>());
-    graph.get(source).add(destination);
-    graph.get(destination).add(source); // 양방향 그래프
+  public static void addEdge(int source, int destination) {
+    graph[source][destination] = 1;
+    graph[destination][source] = 1; // 양방향
   }
 
-  public void dfs(int start) {
-    Set<Integer> visited = new HashSet<>();
-    dfsUtil(start, visited);
-  }
+  public static void dfs(int start) {
+    visited[start] = true;
+    System.out.print(start + " ");
 
-  public void dfsUtil(int vertex, Set<Integer> visited) {
-    visited.add(vertex);
-    System.out.print(vertex + " ");
-
-    for (int neighbor : graph.getOrDefault(vertex, new ArrayList<>())) {
-      if (!visited.contains(neighbor)) {
-        dfsUtil(neighbor, visited);
+    for (int i = 1; i < graph.length; i++) {
+      if (graph[start][i] == 1 && !visited[i]) {
+        dfs(i);
       }
     }
   }
 
-  public void bfs(int start) {
-    Set<Integer> visited = new HashSet<>();
+  public static void bfs(int start) {
     Queue<Integer> queue = new LinkedList<>();
-
-    visited.add(start);
     queue.offer(start);
+    visited[start] = true;
 
     while (!queue.isEmpty()) {
       int current = queue.poll();
       System.out.print(current + " ");
 
-      for (int neighbor : graph.getOrDefault(current, new ArrayList<>())) {
-        if (!visited.contains(neighbor)) {
-          visited.add(neighbor);
-          queue.offer(neighbor);
+      for (int i = 1; i < graph.length; i++) {
+        if (graph[current][i] == 1 && !visited[i]) {
+          queue.offer(i);
+          visited[i] = true;
         }
       }
+
     }
+
   }
 }
