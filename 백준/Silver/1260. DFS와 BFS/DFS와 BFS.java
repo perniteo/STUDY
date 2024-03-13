@@ -38,6 +38,10 @@ public class Main {
   public static void dfs(int start) {
     visited[start] = true;
     System.out.print(start + " ");
+      
+    if (start == graph.length) {
+        return;
+    }
 
     for (int i = 1; i < graph.length; i++) {
       if (graph[start][i] == 1 && !visited[i]) {
